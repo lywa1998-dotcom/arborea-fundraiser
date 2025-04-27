@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbórea Project Fundraiser</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2e7d32;
+    }
+    p {
+      text-align: center;
+      font-size: 1.1em;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.95em;
+    }
+    th {
+      background-color: #4caf50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .note {
+      font-style: italic;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+    .footer {
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
+    input[type="checkbox"] {
+      transform: scale(1.3);
+      cursor: not-allowed;
+    }
+    .progress-container {
+      width: 80%;
+      background-color: #ddd;
+      border-radius: 20px;
+      margin: 20px auto;
+      height: 30px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: #4caf50;
+      width: 0%;
+      text-align: center;
+      color: white;
+      line-height: 30px;
+      font-weight: bold;
+    }
+    .unlock-button {
+      display: block;
+      margin: 20px auto;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌱 Arbórea Project – First Phase Equipment Fundraiser</h1>
+
+  <p>We are raising funds to purchase essential tools for the daily operation and maintenance of <strong>Arbórea</strong>, our agroecological and educational space.</p>
+
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar">0%</div>
+  </div>
+
+  <button class="unlock-button" id="unlockButton">Unlock Editing</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>✅</th>
+        <th>Tool/Resource</th>
+        <th>Quantity</th>
+        <th>€ (Euros)</th>
+        <th>£ (Pounds)</th>
+        <th>$ (USD)</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody id="itemsTable">
+      <!-- Items will go here -->
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <p><strong>Total Needed:</strong> €607 | £520 | $644</p>
+    <p><strong>Plus £20 for estimated transfer and GoFundMe fees.</strong></p>
+  </div>
+
+  <div class="note">
+    * Dollar amount is an approximate conversion.
+  </div>
+
+  <script>
+    const tools = [
+      ["Manual Pickaxes", 4, 45, 39, 48, "Daily fieldwork: preparing planting beds, weeding, and soil maintenance."],
+      ["Work Gloves", 5, 8, 7, 8.5, "Daily protection for fieldwork at Arbórea."],
+      ["Gasoline Lawn Mower", 1, 442, 380, 470, "Essential for maintaining all green spaces in Arbórea."],
+      ["Gasoline (6 liters)", "6L", 3.5, 3, 4, "Fuel for the lawn mower and field tools."],
+      ["Hose", 1, 40, 33, 43, "Needed daily for watering the crops and gardens."],
+      ["Black Thread", 1, 11, 9, 11.5, "Used for recycling projects creating urban gardens from plastic bottles."],
+      ["Seeds", "10 packs", 11, 9, 11.5, "Needed to plant and expand our agroecological production plots."],
+      ["Watering Can", 1, "TBD", "TBD", "TBD", "Needed for seedling and garden maintenance."],
+      ["Organic Fertilizer", 2, 7, 5.5, 7.5, "Essential nutrients for healthy, chemical-free crop growth."],
+      ["White Paint (10L)", "10L", 27.4, 24, 29, "Used for creative workshops and educational signage around Arbórea."],
+      ["Materials for Organic Insecticides", 1, 12.73, 11, 13.5, "For eco-friendly pest control across our gardens."],
+      ["Sprayer", 1, 34.36, 30, 36.5, "Used for applying organic insecticides safely and efficiently."],
+      ["Wheelbarrow Tire Replacement", 1, 8.91, 8, 9.5, "Repair needed for the essential Arbórea wheelbarrow used in daily operations."]
+    ];
+
+    const tableBody = document.getElementById('itemsTable');
+    const progressBar = document.getElementById('progress-bar');
+    const unlockButton = document.getElementById('unlockButton');
+
+    // Build the table rows
+    tools.forEach((tool, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="checkbox" data-id="${index}" disabled></td>
+        <td>${tool[0]}</td>
+        <td>${tool[1]}</td>
+        <td>${tool[2]}</td>
+        <td>${tool[3]}</td>
+        <td>${tool[4]}</td>
+        <td>${tool[5]}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    function updateProgress() {
+      const total = checkboxes.length;
+      const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+      const percent = Math.round((checked / total) * 100);
+      progressBar.style.width = percent + '%';
+      progressBar.textContent = percent + '%';
+    }
+
+    // Load saved states
+    checkboxes.forEach((checkbox) => {
+      const id = checkbox.getAttribute('data-id');
+      const saved = localStorage.getItem('checkbox-' + id);
+      if (saved === 'true') {
+        checkbox.checked = true;
+      }
+    });
+
+    updateProgress();
+
+    // Save when checkbox changes (only if enabled)
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        if (!checkbox.disabled) {
+          const id = checkbox.getAttribute('data-id');
+          localStorage.setItem('checkbox-' + id, checkbox.checked);
+          updateProgress();
+        }
+      });
+    });
+
+    // Unlock function
+    unlockButton.addEventListener('click', () => {
+      const password = prompt("Enter password to unlock editing:");
+      if (password === "Fungaipacproarb2006!") { // << change this password if you want
+        checkboxes.forEach((checkbox) => {
+          checkbox.disabled = false;
+          checkbox.style.cursor = 'pointer';
+        });
+        unlockButton.style.display = 'none';
+      } else {
+        alert("Incorrect password!");
+      }
+    });
+
+  </script>
+
+</body>
+</html>
